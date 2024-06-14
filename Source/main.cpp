@@ -5,18 +5,18 @@
 #include <assimp/postprocess.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stb/stb_image.h>
+#include "../Headers/stb_image.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Texture.h"
-#include "shaderClass.h"
-#include "VAO.h"
-#include "VBO.h"
-#include "EBO.h"
-#include "Camara.h"
-#include "mapeo.h"
-#include "As3D.h"
+#include "../Headers/texture.h"
+#include "../Headers/shaderClass.h"
+#include "../Headers/VAO.h"
+#include "../Headers/VBO.h"
+#include "../Headers/EBO.h"
+#include "../Headers/Camara.h"
+#include "../Headers/mapeo.h"
+#include "../Headers/As3D.h"
 
 const unsigned int width = 1366;
 const unsigned int height = 768;
@@ -33,9 +33,9 @@ std::vector<unsigned int> indices;
 GLuint modelVAO, modelVBO, modelEBO, modelShaderProgram;
 
 int main() {
-    // Inicialización de GLFW
+    // Inicializaciï¿½n de GLFW
     glfwInit();
-    // Configuración de versión y perfil de OpenGL 3.3, CORE
+    // Configuraciï¿½n de versiï¿½n y perfil de OpenGL 3.3, CORE
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -52,8 +52,8 @@ int main() {
     glViewport(0, 0, width, height);
 
     // Shader programs
-    Shader shaderProgram("default.vert", "default.frag");
-    Shader lightShader("light.vert", "light.frag");
+    Shader shaderProgram("../Resource/Shaders/default.vert", "../Resource/Shaders/default.frag");
+    Shader lightShader("../Resource/Shaders/light.vert", "../Resource/Shaders/light.frag");
 
     // VAO, VBO y EBO para la figura
     VAO VAO1;
@@ -78,7 +78,7 @@ int main() {
     lightVBO.Unbind();
     lightEBO.Unbind();
 
-    // Configuración de la luz
+    // Configuraciï¿½n de la luz
     glm::vec4 lightColor = glm::vec4(1.0f, 0.9f, 0.8f, 1.0f);
     glm::vec3 lightPos = glm::vec3(-0.4f, 0.5f, 0.0f);
     glm::mat4 lightModel = glm::mat4(1.0f);
@@ -97,7 +97,7 @@ int main() {
     // Cargar textura
     int widthImg, heightImg, numColCh;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("Bark0.jpg", &widthImg, &heightImg, &numColCh, 0);
+    unsigned char* bytes = stbi_load("../Resource/Textures/Bark0.jpg", &widthImg, &heightImg, &numColCh, 0);
     if (bytes == nullptr) {
         std::cout << "Failed to load texture" << std::endl;
         return -1;
@@ -121,11 +121,11 @@ int main() {
     glUniform1i(tex0Uni, 0);
 
     glEnable(GL_DEPTH_TEST);
-    Camera camera(width, height, glm::vec3(0.0f, 1.5f, 5.0f));
+    Camera camera(width, height, glm::vec3(0.0f, 3.5f, 30.0f));
 
     // Cargar modelo .obj
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile("Trees9.obj", aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile("../Resource/Models/trees9.obj", aiProcess_Triangulate | aiProcess_FlipUVs);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
         return -1;
@@ -145,7 +145,7 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-    // Posiciones de los vértices
+    // Posiciones de los vï¿½rtices
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // Normales
@@ -158,7 +158,7 @@ int main() {
     glBindVertexArray(0);
 
     // Crear shader para el modelo
-    modelShaderProgram = loadShaders("model.vert", "model.frag");
+    modelShaderProgram = loadShaders("../Resource/Shaders/model.vert", "../Resource/Shaders/model.frag");
 
     // Bucle principal
     while (!glfwWindowShouldClose(window)) {

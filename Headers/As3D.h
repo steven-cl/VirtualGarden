@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -14,7 +14,7 @@ struct Mesh {
 std::vector<Mesh> meshes;
 
 
-// Función para cargar un modelo OBJ utilizando Assimp
+// Funciï¿½n para cargar un modelo OBJ utilizando Assimp
 void loadOBJ(const std::string& filePath) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -46,18 +46,18 @@ void loadOBJ(const std::string& filePath) {
     }
 }
 
-// Función de renderizado
+// Funciï¿½n de renderizado
 void render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Renderizar cada malla del modelo
     for (const auto& mesh : meshes) {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 0, mesh.vertices.data());
+        glEnable(GL_VERTEX_ARRAY_BINDING);
+        glVertexAttribPointer(3, GL_BGRA, GL_FLOAT, GL_TRUE, 0, mesh.vertices.data());
 
         glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, mesh.indices.data());
 
-        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisable(GL_VERTEX_ARRAY_BINDING);
     }
 
     glutSwapBuffers();
@@ -68,7 +68,7 @@ void inicio3dss(int argc, char** argv) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 
     // Cargar modelo OBJ
-    loadOBJ("TreeColor.obj");
+    loadOBJ("../Resource/Models/trees9.obj");
 
     glutDisplayFunc(render);
 
